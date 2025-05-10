@@ -21,6 +21,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
+            position: relative;
         }
         h1 {
             font-size: 2.5em;
@@ -30,8 +31,12 @@
             color: #555;
             margin-bottom: 20px;
         }
+        .copy-button-wrapper {
+            position: relative;
+            display: inline-block;
+        }
         button {
-            background-color: #000;
+            background-color: #4CAF50; /* Green color */
             color: #fff;
             border: none;
             padding: 12px 30px;
@@ -41,7 +46,25 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #333;
+            background-color: #45a049; /* Darker green on hover */
+        }
+        .copy-notification {
+            position: absolute;
+            background-color: #e0e0e0; /* Light gray background */
+            color: #333; /* Darker text for better contrast */
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            z-index: 10;
+            top: 50%;
+            left: calc(100% + 10px);
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .copy-notification.show {
+            opacity: 1;
         }
         .note {
             color: #777;
@@ -52,63 +75,87 @@
 </head>
 <body>
     <div class="container">
-        <h1>免费订阅</h1>
-        <p>来自10+个国家和地区的节点</p>
-        <p>适配几乎所有软件和app</p>
-        <p>节点仅供测试和学习，请勿滥用</p>
-        <button id="copyButton">立即复制</button>
+        <h1>永久免费机场节点</h1>
+        <p>来自10+个国家的免费节点</p>
+                <p>节点仅供测试和学习，请勿滥用</p>
+      <p>适配几乎所有软件</p>
+        <div class="copy-button-wrapper">
+            <button id="copyButton">复制订阅地址</button>
+            <div id="copyNotification" class="copy-notification">复制成功！</div>
+        </div>
         <p class="note">为公平使用，每天零点重置一次配置</p>
         <p class="note">如遇无法使用，请更新订阅获取最新配置</p>
-    </div>
+      
+      <hr style="border: 1px solid gray;">
+      
+      <p class="note">任意一款软件，立即开始</p>
+      <p style="font-size: 10px;color: red;">根据您的设备，简单几步完成下载、安装和订阅更新</p>
 
+      <hr style="border: 1px solid gray;">
+      <p class="note" style="text-align: left;">强烈推荐：Clash Verge ----
+        <a href="https://github.com/clash-verge-rev/clash-verge-rev/tags" target="_blank" style="text-decoration: none; color: navy;">下载</a>
+   ----
+        <a href="https://www.clashverge.dev/index.html" target="_blank" style="text-decoration: none; color: navy;">教程</a></p>
+      <p class="note" style="text-align: left;">v2rayN ----
+        <a href="https://github.com/2dust/v2rayN/tags" target="_blank" style="text-decoration: none; color: navy;">下载</a>
+   ----
+      <a href="https://xtrojan.org/client/latest-v2rayn-quick-start.html" target="_blank" style="text-decoration: none; color: navy;">教程</a></p>
+  </div>
+<hr>
     <script>
-        document.getElementById("copyButton").addEventListener("click", function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyButton = document.getElementById("copyButton");
+            const copyNotification = document.getElementById("copyNotification");
             const textToCopy = "https://bazmaf.503403.xyz";
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(textToCopy)
-                    .then(() => {
-                        alert("链接已复制！");
-                    })
-                    .catch(err => {
-                        console.error('使用 clipboard API 复制失败: ', err);
-                        fallbackCopyTextToClipboard(textToCopy);
-                    });
-            } else {
-                fallbackCopyTextToClipboard(textToCopy);
+            copyButton.addEventListener("click", function() {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => {
+                            showNotification();
+                        })
+                        .catch(err => {
+                            console.error('使用 clipboard API 复制失败: ', err);
+                            fallbackCopyTextToClipboard(textToCopy);
+                        });
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy);
+                }
+            });
+
+            function showNotification() {
+                copyNotification.classList.add("show");
+                setTimeout(() => {
+                    copyNotification.classList.remove("show");
+                }, 2000);
+            }
+
+            function fallbackCopyTextToClipboard(text) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.top = 0;
+                textArea.style.left = 0;
+                textArea.style.width = "2em";
+                textArea.style.height = "2em";
+                textArea.style.padding = 0;
+                textArea.style.border = "none";
+                textArea.style.outline = "none";
+                textArea.style.boxShadow = "none";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    const msg = successful ? '复制成功！' : '复制失败，请手动复制。';
+                    alert(msg);
+                } catch (err) {
+                    console.error('使用 document.execCommand("copy") 复制失败: ', err);
+                    alert('复制失败，请手动复制。');
+                }
+                document.body.removeChild(textArea);
             }
         });
-
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-
-            // Avoid showing the textarea:
-            textArea.style.position = "fixed";
-            textArea.style.top = 0;
-            textArea.style.left = 0;
-            textArea.style.width = "2em";
-            textArea.style.height = "2em";
-            textArea.style.padding = 0;
-            textArea.style.border = "none";
-            textArea.style.outline = "none";
-            textArea.style.boxShadow = "none";
-
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
-            try {
-                const successful = document.execCommand('copy');
-                const msg = successful ? '复制成功！' : '复制失败，请手动复制。';
-                alert(msg);
-            } catch (err) {
-                console.error('使用 document.execCommand("copy") 复制失败: ', err);
-                alert('复制失败，请手动复制。');
-            }
-
-            document.body.removeChild(textArea);
-        }
     </script>
 </body>
 </html>
